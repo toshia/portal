@@ -27,4 +27,17 @@ Plugin.create :portal do
         target_slug: values[:secondary],
         next_portal: nil))
   end
+
+  filter_search_spell do |yielder, name, models, optional|
+    portals, others = models.partition{|model| model.class.slug == :portal }
+    if portals.size == 1        # 複数のPortalが同時に使われるケースは対応してないんじゃ
+      selected_world = portals.first.world
+      Enumerator.new{|fallback|
+        Plugin.filtering(:search_spell, fallback, name, [selected_world, *others], optional)
+      }.each{|spell|
+        yielder << spell
+      }
+    end
+    [yielder, name, models, optional]
+  end
 end
