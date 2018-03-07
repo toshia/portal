@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-require_relative "model/portal.rb"
+require_relative "model/portal"
+require_relative "cursed_spell"
 
 Plugin.create :portal do
   world_setting(:portal, "Portal") do
@@ -31,13 +32,14 @@ Plugin.create :portal do
   filter_search_spell do |yielder, name, models, optional|
     portals, others = models.partition{|model| model.class.slug == :portal }
     if portals.size == 1        # 複数のPortalが同時に使われるケースは対応してないんじゃ
-      selected_world = portals.first.world
+      selected_portal = portals.first
       Enumerator.new{|fallback|
-        Plugin.filtering(:search_spell, fallback, name, [selected_world, *others], optional)
+        Plugin.filtering(:search_spell, fallback, name, [selected_portal.world, *others], optional)
       }.each{|spell|
-        yielder << spell
+        yielder << Plugin::Portal::CursedSpell.new(spell, portal: selected_portal)
       }
     end
     [yielder, name, models, optional]
   end
 end
+
