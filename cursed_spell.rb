@@ -13,7 +13,12 @@ module Plugin::Portal
 
     def self.metamorphose(method_name)
       define_method(method_name) do |models, *rest|
-        @pure_spell.__send__(method_name, models.map{|m| m == @portal ? @portal.world : m}, *rest)
+        @pure_spell.__send__(
+          method_name,
+          models.map{|m|
+            m === @portal ? @portal.world : m
+          },
+          *rest)
       end
     end
 

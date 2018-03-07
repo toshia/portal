@@ -23,20 +23,8 @@ module Plugin::Portal
       self[:target_slug].to_sym
     end
 
-    # portalを優先順位毎に
-    def portal_each(&proc)
-      if proc
-        portal_each.each(&proc)
-      else
-        Enumerator.new do |y|
-          y << self
-          if next_portal
-            next_portal.portal_each do |ancestor|
-              y << ancestor
-            end
-          end
-        end
-      end
+    def ===(other)
+      self == other || self.next_portal === other
     end
 
     def respond_to?(method_name)

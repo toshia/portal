@@ -32,14 +32,20 @@ Plugin.create :portal do
   filter_search_spell do |yielder, name, models, optional|
     portals, others = models.partition{|model| model.class.slug == :portal }
     if portals.size == 1        # 複数のPortalが同時に使われるケースは対応してないんじゃ
-      selected_portal = portals.first
-      Enumerator.new{|fallback|
-        Plugin.filtering(:search_spell, fallback, name, [selected_portal.world, *others], optional)
-      }.each{|spell|
-        yielder << Plugin::Portal::CursedSpell.new(spell, portal: selected_portal)
-      }
+      connect_to_parallel_world(yielder, name, others, optional, portals.first)
     end
     [yielder, name, models, optional]
+  end
+
+  def connect_to_parallel_world(yielder, name, models, optional, selected_portal)
+    Enumerator.new{|fallback|
+      Plugin.filtering(:search_spell, fallback, name, [selected_portal.world, *models], optional)
+    }.each{|spell|
+      yielder << Plugin::Portal::CursedSpell.new(spell, portal: selected_portal)
+    }
+    if selected_portal.next_portal
+      connect_to_parallel_world(yielder, name, models, optional, selected_portal.next_portal)
+    end
   end
 end
 
