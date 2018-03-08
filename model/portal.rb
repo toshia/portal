@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+require_relative 'portal_photo'
 
 module Plugin::Portal
   class World < Diva::Model
@@ -13,6 +14,18 @@ module Plugin::Portal
       Enumerator.new{|y| Plugin.filtering(:worlds, y) }.find{ |w|
         w.slug.to_sym == target_slug
       }
+    end
+
+    def name
+      self[:name] || ''
+    end
+
+    def icon
+      if next_portal
+        Plugin::Portal::TiltPhoto.new(head: world.icon, tail: next_portal.icon)
+      else
+        world.icon
+      end
     end
 
     def slug
