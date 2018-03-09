@@ -14,7 +14,7 @@ mikutterで複数のWorldを使い分けていると、間違って別のSNSに�
 
 ## 要件
 
-mikutterは、さっき直したバグが直ってないと動かないので、 `topic/1175-world-savedata-format-fix` というブランチに切り替えて使ってください。
+mikutter 3.6.5 以降を使ってください。それ以前だと、mikutter側の不具合の影響で動作しません。
 
 ## インストール方法
 
