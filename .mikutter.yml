@@ -1,0 +1,12 @@
+---
+slug: :portal
+depends:
+  mikutter: 3.6.5
+  plugin:
+    - world
+    - spell
+version: '1.0'
+author: toshi_a
+name: Portal
+description: >-
+  複数のWorldをひとまとめにしたWorld「Portal」を追加します。
