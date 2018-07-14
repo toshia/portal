@@ -36,6 +36,14 @@ module Plugin::Portal
       self[:target_slug].to_sym
     end
 
+    memoize def path
+      if next_portal
+        "#{next_portal.path}/#{slug}"
+      else
+        "/#{slug}"
+      end
+    end
+
     def ===(other)
       self == other || self.next_portal === other
     end
