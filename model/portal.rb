@@ -48,8 +48,8 @@ module Plugin::Portal
       self == other || self.next_portal === other
     end
 
-    def respond_to?(method_name)
-      world.respond_to?(method_name) || next_portal&.respond_to?(method_name)
+    def respond_to_missing?(method_name, include_private=false)
+      world.respond_to?(method_name, include_private) || next_portal&.respond_to?(method_name, include_private)
     end
 
     def method_missing(method_name, *rest, &proc)
