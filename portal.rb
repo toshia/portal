@@ -29,6 +29,16 @@ Plugin.create :portal do
         next_portal: nil))
   end
 
+  # 削除されたWorldを抱えるPortalがあれば、それを削除する
+  on_world_destroy do |destroyed_world|
+    worlds, = Plugin.filtering(:worlds, [])
+    worlds.select { |world|
+      world.is_a?(Plugin::Portal::World) && world.include?(destroyed_world)
+    }.each { |dead_portal|
+      Plugin.call(:world_destroy, dead_portal)
+    }
+  end
+
   filter_search_spell do |yielder, name, models, optional|
     portals, others = models.partition{|model| model.class.slug == :portal }
     if portals.size == 1        # 複数のPortalが同時に使われるケースは対応してないんじゃ
